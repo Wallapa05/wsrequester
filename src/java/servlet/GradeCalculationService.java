@@ -1,106 +1,48 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package servlet;
+package ws;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.xml.ws.WebServiceRef;
-import ws.GradeCalculationService_Service;
+import javax.jws.WebService;
+import javax.jws.WebMethod;
+import javax.jws.WebParam;
 
 /**
  *
  * @author 8402-01
  */
-@WebServlet(name = "GradeCalculationService", urlPatterns = {"/GradeCalculationService"})
-public class GradeCalculationService extends HttpServlet {
-
-    @WebServiceRef(wsdlLocation = "WEB-INF/wsdl/localhost_8080/wsprovider/GradeCalculationService.wsdl")
-    private GradeCalculationService_Service service;
+@WebService(serviceName = "GradeCalculationService")
+public class GradeCalculationService {
 
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * This is a sample web service operation
      */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet GradeCalculationService</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet GradeCalculationService at " + request.getContextPath() + "</h1>");
-            
-            double score = 75.00;
-            String myGrade = computeGrade(score);
-            out.println("<h2>"+myGrade+"</h2>");
-            
-            
-            out.println("</body>");
-            out.println("</html>");
+    @WebMethod(operationName = "hello")
+    public String hello(@WebParam(name = "name") String txt) {
+        return "Hello " + txt + " !";
+    }
+
+    /**
+     * Web service operation
+     */
+    @WebMethod(operationName = "computeGrade")
+    public String computeGrade(@WebParam(name = "score") double score) {
+        //TODO write your implementation code here:
+        if (score < 0 || score > 100) {
+            return "Error input score 0 - 100";
+        } else if (score >= 80) {
+            return "Score = " + score + " , Your Grade : A";
+        } else if (score >= 75) {
+            return "Score = " + score + " , Your Grade : B+";
+        } else if (score >= 70) {
+            return "Score = " + score + " , Your Grade : B";
+        } else if (score >= 65) {
+            return "Score = " + score + " , Your Grade : C+";
+        } else if (score >= 60) {
+            return "Score = " + score + " , Your Grade : C";
+        } else if (score >= 55) {
+            return "Score = " + score + " , Your Grade : D+";
+        } else if (score >= 50) {
+            return "Score = " + score + " , Your Grade : D";
+        } else {
+            return "Score = " + score + " , You Grade : F";
         }
     }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
-    private String computeGrade(double score) {
-        // Note that the injected javax.xml.ws.Service reference as well as port objects are not thread safe.
-        // If the calling of port operations may lead to race condition some synchronization is required.
-        ws.GradeCalculationService port = service.getGradeCalculationServicePort();
-        return port.computeGrade(score);
-    }
-
 }
